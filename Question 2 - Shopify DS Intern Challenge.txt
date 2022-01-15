@@ -1,0 +1,42 @@
+SQL part 2
+
+Question 1: How many orders were shipped by Speedy Express in total?
+
+Query:
+SELECT COUNT(OrderID)  as Counted_Orders
+FROM Orders, Shippers
+WHERE Orders.ShipperID = Shippers.ShipperID
+AND Shippers.ShipperName = "Speedy Express";
+
+Returns 54
+
+
+
+Question 2: What is the last name of the employee with the most orders?
+
+Query:
+SELECT LastName 
+FROM (SELECT EmployeeID as eID, MAX(Total) FROM (SELECT EmployeeID, COUNT(OrderID) as Total FROM Orders GROUP BY EmployeeID ORDER BY COUNT(OrderID) DESC)), Employees 
+WHERE eID = Employees.EmployeeID; 
+
+Returns Peacock
+
+
+
+Question 3: What product was ordered the most by customers in Germany?
+
+Query:
+SELECT ProductName 
+FROM
+	(SELECT ProductName as pName, MAX(Total) 
+	FROM 
+	(SELECT ProductName,COUNT(ProductName) as Total 
+	FROM Customers, Orders, OrderDetails, Products 
+	WHERE Products.ProductID=OrderDetails.ProductID 
+	AND Customers.CustomerID = Orders.CustomerID 
+	AND OrderDetails.OrderID=Orders.OrderID 
+	AND Customers.Country = "Germany" 
+	GROUP BY ProductName)), Products
+WHERE pName = Products.ProductName;
+
+Returns Gorgonzola Telino
